@@ -1,0 +1,58 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+parameters:
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+
+    App\Resolver\ProxyRequestResolver:
+
+    App\Builder\ProxyResponseBuilder:
+
+    App\Service\CorsService:
+
+    App\Service\ProxyErrorHandler:
+
+    App\Service\UrlRewriter\TextUrlRewriter:
+        arguments:
+            $proxyTargets: '%env(csv:PROXY_TARGETS)%'
+
+    App\Service\UrlRewriter\DomUrlRewriter:
+
+    App\Service\UrlRewriter\UrlRewriter:
+
+    App\Service\ProxyService:
+        arguments:
+            $defaultTarget: '%env(PROXY_DEFAULT_TARGET)%'
+
+    App\Service\ContentModifier\HtmlModifier:
+        arguments:
+            $targetDomains: '%env(csv:PROXY_TARGET_DOMAINS)%'
+            $mainDomains: '%env(csv:PROXY_MAIN_DOMAINS)%'
+
+    # ======================
+    # Interface bindings
+    # ======================
+    App\Service\UrlRewriter\UrlRewriterInterface: '@App\Service\UrlRewriter\UrlRewriter'
+    App\Service\ContentModifier\ContentModifierInterface: '@App\Service\ContentModifier\ContentModifier'
+    App\Service\TextModifier\TextModifierInterface: '@App\Service\TextModifier\TextModifier'
+    App\Service\CorsService\CorsServiceInterface: '@App\Service\CorsService\CorsService'
+    App\Service\ProxyErrorHandler\ProxyErrorHandlerInterface: '@App\Service\ProxyErrorHandler\ProxyErrorHandler'
+    App\Builder\ProxyResponseBuilderInterface: '@App\Builder\ProxyResponseBuilder'
+    App\Resolver\ProxyRequestResolverInterface: '@App\Resolver\ProxyRequestResolver'

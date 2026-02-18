@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: symfony-proxy
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: php
+          env:
+            - name: APP_ENV
+              value: "prod"
+            - name: APP_DEBUG
+              value: "0"
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: symfony-proxy-secret
+                  key: app-secret
+
+            - name: PROXY_TARGETS
+              value: "https://symfony.com,https://www.php.net"
+            - name: PROXY_DEFAULT_TARGET
+              value: "https://www.php.net"
+            - name: PROXY_TARGET_DOMAINS
+              value: "php.net,symfony.com"
+            - name: PROXY_MAIN_DOMAINS
+              value: "php.net,symfony.com"
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "1000m"

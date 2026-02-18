@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: symfony-proxy
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: php
+          env:
+            - name: APP_ENV
+              value: "dev"
+            - name: APP_DEBUG
+              value: "1"
+            - name: APP_SECRET
+              value: "dev_secret_very_unsafe"
+
+            - name: PROXY_TARGETS
+              value: "https://www.php.net"
+            - name: PROXY_DEFAULT_TARGET
+              value: "https://www.php.net"
+            - name: PROXY_TARGET_DOMAINS
+              value: "php.net"
+            - name: PROXY_MAIN_DOMAINS
+              value: "php.net"
